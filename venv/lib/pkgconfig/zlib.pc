@@ -1,0 +1,13 @@
+prefix=/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv
+exec_prefix=/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv
+libdir=/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv/lib
+sharedlibdir=/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv/lib
+includedir=/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

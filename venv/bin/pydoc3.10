@@ -1,0 +1,5 @@
+#!/Users/mriduljhawar/Desktop/Github_Projects/Langchain_Projects/venv/bin/python3.10
+
+import pydoc
+if __name__ == '__main__':
+    pydoc.cli()
