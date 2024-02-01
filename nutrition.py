@@ -12,9 +12,8 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Function to get response from Google Gemini Pro Vision API
 def get_gemini_response(input_prompt, image, custom_input):
-    with st.spinner('Analyzing the image...'):
-        model = genai.GenerativeModel('gemini-pro-vision')
-        response = model.generate_content([input_prompt, image[0], custom_input])
+    model = genai.GenerativeModel('gemini-pro-vision')
+    response = model.generate_content([input_prompt, image[0], custom_input])
     return response.text
 
 # Function to process the uploaded image
@@ -31,6 +30,7 @@ def input_image_setup(uploaded_file):
     else:
         raise FileNotFoundError("No file uploaded")
 
+# Function to parse nutrition data from the AI model's response
 # Function to parse nutrition data from the AI model's plain text response
 def parse_nutrition_data(response_text):
     # Initialize total counts
@@ -57,6 +57,25 @@ def parse_nutrition_data(response_text):
 
     return total_nutrition
 
+
+def set_bg_color():
+    # Define the CSS
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background-color: #FFB6C1;
+        }
+        .css-1d391kg {
+            background-color: #FFB6C1;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Call the function to set the background color
+set_bg_color()
 
 # Initialize Streamlit app configuration
 st.set_page_config(page_title="Gemini Health App")
@@ -89,18 +108,23 @@ if submit:
         st.error("Please upload an image to proceed.")
     else:
         try:
-            with st.spinner("Processing..."):
-                image_data = input_image_setup(uploaded_file)
-                response = get_gemini_response(input_prompt, image_data, custom_input)
-                st.subheader("Analysis Results")
-                st.write(response)
+            image_data = input_image_setup(uploaded_file)
+            response = get_gemini_response(input_prompt, image_data, custom_input)
+            st.subheader("Analysis Results")
+            st.write(response)
 
-                # Parse nutrition data from the response
-                nutrition_data = parse_nutrition_data(response)
+            # Parse nutrition data from the response
+            nutrition_data = parse_nutrition_data(response)
+            
+            # Calculate total macronutrients for percentage calculation
+            total_macros = sum(nutrition_data.values())
+            
+            # Display nutrition data in the sidebar
+            st.sidebar.header("Nutrition Breakdown")
+            for nutrient, value in nutrition_data.items():
+                # Calculate percentage
+                percent = (value / total_macros) * 100 if total_macros > 0 else 0
+                st.sidebar.write(f"{nutrient}: {percent:.2f}%")
                 
-                # Display nutrition data in the sidebar
-                st.sidebar.header("Nutrition Breakdown")
-                for nutrient, percentage in nutrition_data.items():
-                    st.sidebar.write(f"{nutrient}: {percentage}%")
         except Exception as e:
             st.error(f"An error occurred: {e}")
